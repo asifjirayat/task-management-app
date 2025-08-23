@@ -87,6 +87,45 @@ const App = () => {
             </div>
           </div>
         </section>
+        {/* Task Stats */}
+        <section className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Task Statistics
+          </h2>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">2</div>
+              <div className="text-sm text-gray-600">Total Tasks</div>
+            </div>
+            <div className="p-4 bg-yellow-50 rounded-lg">
+              <div className="text-2xl font-bold text-yellow-600">2</div>
+              <div className="text-sm text-gray-600">Pending</div>
+            </div>
+            <div className="p-4 bg-green-50 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">1</div>
+              <div className="text-sm text-gray-600">Completed</div>
+            </div>
+          </div>
+        </section>
+        {/* Footer */}
+        <footer className="bg-white border-t border-gray-200 mt-8">
+          <div className="max-w-4xl mx-auto px-4 py-2">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <div className="text-gray-600">
+                <span>Created by</span>{" "}
+                <span className="font-semibold text-gray-900">
+                  <a
+                    href="https://github.com/asifjirayat"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Asif Jirayat
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </footer>
       </main>
     </>
   );

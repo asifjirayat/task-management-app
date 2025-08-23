@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { act, useEffect, useState } from "react";
 import Header from "./components/Header.jsx";
 import Section from "./components/Section.jsx";
 import Button from "./components/Button.jsx";
@@ -10,8 +10,28 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
-  const [tasks, setTasks] = useState([]);
+
+  // Initialize tasks from localStorage
+  const [tasks, setTasks] = useState(() => {
+    try {
+      const savedTasks = localStorage.getItem("tasks");
+      return savedTasks ? JSON.parse(savedTasks) : [];
+    } catch (error) {
+      console.error("Error loading tasks from localStorage:", error);
+      return [];
+    }
+  });
+
   const [newTaskText, setNewTaskText] = useState("");
+
+  // Sync tasks from localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    } catch (error) {
+      console.error("Error saving tasks to localStorage:", error);
+    }
+  }, [tasks]);
 
   // Handle search input
   const handleSearchInput = (event) => {
@@ -38,18 +58,54 @@ const App = () => {
   // Handle new tasks added
   const handleAddTask = () => {
     if (newTaskText.trim()) {
+      const capitalizedText =
+        newTaskText.trim().charAt(0).toUpperCase() +
+        newTaskText.trim().slice(1);
       const newTask = {
         id: Date.now(),
-        text: newTaskText.trim(),
+        text: capitalizedText,
         completed: false,
       };
 
       setTasks([...tasks, newTask]);
       setNewTaskText("");
       setShowAddForm(false);
-      console.log("Task added:", newTask);
     }
   };
+
+  // Handle task completion toggle
+  const handleToggleTask = (taskId) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  // Handle task deletion
+  const handleDeleteTask = (taskId) =>
+    setTasks(tasks.filter((task) => task.id !== taskId));
+
+  // Function to get filtered tasks
+  const getFilteredTasks = () => {
+    let filteredTasks = tasks;
+
+    // Apply status filter
+    if (activeFilter === "pending")
+      filteredTasks = filteredTasks.filter((task) => !task.completed);
+    else if (activeFilter === "completed")
+      filteredTasks = filteredTasks.filter((task) => task.completed);
+
+    if (searchTerm.trim()) {
+      filteredTasks = filteredTasks.filter((task) =>
+        task.text.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    return filteredTasks;
+  };
+
+  const filteredTasks = getFilteredTasks();
 
   return (
     <>
@@ -129,19 +185,39 @@ const App = () => {
         {/* Task List*/}
         <Section title="Task List">
           <div className="space-y-3">
-            {console.log(tasks)}
-            {tasks.map((task) => (
-              <TaskItem key={task.id} task={task.text} />
-            ))}
+            {filteredTasks.length > 0 ? (
+              filteredTasks.map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  onToggle={handleToggleTask}
+                  onDelete={handleDeleteTask}
+                />
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                {searchTerm || activeFilter !== "all"
+                  ? "No tasks match your current filters"
+                  : "No tasks yet. Add your first task above!"}
+              </div>
+            )}
           </div>
         </Section>
 
         {/* Task Stats */}
         <Section title="Task Statistics">
           <div className="grid grid-cols-3 gap-4 text-center">
-            <StatCard tasksCount={1} label="Total Tasks" />
-            <StatCard tasksCount={1} label="Pending" type="pending" />
-            <StatCard tasksCount={1} label="Completed" type="completed" />
+            <StatCard tasksCount={tasks.length} label="Total Tasks" />
+            <StatCard
+              tasksCount={tasks.filter((task) => !task.completed).length}
+              label="Pending"
+              type="pending"
+            />
+            <StatCard
+              tasksCount={tasks.filter((task) => task.completed).length}
+              label="Completed"
+              type="completed"
+            />
           </div>
         </Section>
       </main>

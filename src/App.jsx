@@ -1,96 +1,123 @@
+import { useState } from "react";
 import Header from "./components/Header.jsx";
+import Section from "./components/Section.jsx";
+import Button from "./components/Button.jsx";
+import TaskItem from "./components/TaskItem.jsx";
 import StatCard from "./components/StatCard.jsx";
 import Footer from "./components/Footer.jsx";
 
 const App = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  // Handle search input
+  const handleSearchInput = (event) => {
+    const { value } = event.target;
+    setSearchTerm(value);
+  };
+
+  // Handle filter selection
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+  };
+
+  // Handle add task
+  const handleToggleAddTask = () => {
+    console.log("Handle toggle add task called....");
+    setShowAddForm(!showAddForm);
+  };
+
   return (
     <>
       <Header />
       <main className="max-w-4xl mx-auto px-4 py-8 w-full flex flex-col flex-grow min-h-screen">
         {/* Search & Controls */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Search & Controls
-          </h2>
+        <Section title="Search & Controls">
           <div className="flex flex-row gap-4">
             <div className="flex-1">
               <input
                 type="text"
                 placeholder="Search tasks..."
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                onChange={handleSearchInput}
+                value={searchTerm}
               />
             </div>
-            <button className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors cursor-pointer">
-              Add Task
-            </button>
+            <Button onClick={handleToggleAddTask}>
+              {showAddForm ? "Cancel" : "Add Task"}
+            </Button>
           </div>
-        </section>
+        </Section>
+
+        {/* Add Task Form */}
+        {showAddForm && (
+          <Section title="Add New Task">
+            <div className="flex gap-4">
+              <input
+                type="text"
+                placeholder="Enter task description..."
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              />
+              <Button>Save Task</Button>
+              <Button type="buttonUnselected" onClick={handleToggleAddTask}>
+                Cancel
+              </Button>
+            </div>
+          </Section>
+        )}
+
         {/* Filter Tasks */}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Filter Tasks
-          </h2>
+        <Section title="Filter Tasks">
           <div className="flex gap-2">
-            <button className="px-4 py-2 bg-blue-100 text-blue-700 border-2 border-blue-300 rounded-lg font-medium capitalize transition-colors">
+            <Button
+              type={
+                activeFilter === "all" ? "buttonSelected" : "buttonUnselected"
+              }
+              onClick={() => handleFilterChange("all")}
+            >
               All
-            </button>
-            <button className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent rounded-lg font-medium capitalize transition-colors cursor-pointer">
+            </Button>
+            <Button
+              type={
+                activeFilter === "pending"
+                  ? "buttonSelected"
+                  : "buttonUnselected"
+              }
+              onClick={() => handleFilterChange("pending")}
+            >
               Pending
-            </button>
-            <button className="px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent rounded-lg font-medium capitalize transition-colors cursor-pointer">
+            </Button>
+            <Button
+              type={
+                activeFilter === "completed"
+                  ? "buttonSelected"
+                  : "buttonUnselected"
+              }
+              onClick={() => handleFilterChange("completed")}
+            >
               Completed
-            </button>
+            </Button>
           </div>
-        </section>
+        </Section>
+
         {/* Task List*/}
-        <section className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Task List
-          </h2>
+        <Section title="Task List">
           <div className="space-y-3">
-            {/* Task 1 */}
-            <div className="flex items-center p-4 border border-gray-200 rounded-lg">
-              <input type="checkbox" className="mr-3 w-4 h-4 text-blue-600" />
-              <span className="flex-1 text-gray-900">
-                Learn React useState hook
-              </span>
-              <button className="px-3 py-1 text-red-600 hover:bg-red-50 rounded transition-colors">
-                Delete
-              </button>
-            </div>
-            {/* Task 2 */}
-            <div className="flex items-center p-4 border border-gray-200 rounded-lg">
-              <input type="checkbox" className="mr-3 w-4 h-4 text-blue-600" />
-              <span className="flex-1 text-gray-900">
-                Setup project with Vite
-              </span>
-              <button className="px-3 py-1 text-red-600 hover:bg-red-50 rounded transition-colors">
-                Delete
-              </button>
-            </div>
-            {/* Task 3 */}
-            <div className="flex items-center p-4 border border-gray-200 rounded-lg">
-              <input type="checkbox" className="mr-3 w-4 h-4 text-blue-600" />
-              <span className="flex-1 text-gray-900">
-                Learn React useState hook
-              </span>
-              <button className="px-3 py-1 text-red-600 hover:bg-red-50 rounded transition-colors">
-                Delete
-              </button>
-            </div>
+            <TaskItem task="Learn React useState hook" />
+            <TaskItem task="Setup project with Vite" />
+            <TaskItem task="Learn React useState hook" />
           </div>
-        </section>
+        </Section>
+
         {/* Task Stats */}
-        <section className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Task Statistics
-          </h2>
+        <Section title="Task Statistics">
           <div className="grid grid-cols-3 gap-4 text-center">
-            <StatCard tasksCount={1} label="Completed Tasks" />
+            <StatCard tasksCount={1} label="Total Tasks" />
             <StatCard tasksCount={1} label="Pending" type="pending" />
             <StatCard tasksCount={1} label="Completed" type="completed" />
           </div>
-        </section>
+        </Section>
       </main>
       <Footer />
     </>

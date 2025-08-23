@@ -1,18 +1,11 @@
-import React from "react";
+import Header from "./components/Header.jsx";
+import StatCard from "./components/StatCard.jsx";
+import Footer from "./components/Footer.jsx";
 
 const App = () => {
   return (
     <>
-      <header className="bg-white shadow-sm flex flex-col">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          <h1 className="text-4xl font-bold text-center text-gray-900">
-            Task Management App
-          </h1>
-          <p className="text-center text-gray-600 mt-2">
-            Implementing React Hooks
-          </p>
-        </div>
-      </header>
+      <Header />
       <main className="max-w-4xl mx-auto px-4 py-8 w-full flex flex-col flex-grow min-h-screen">
         {/* Search & Controls */}
         <section className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -93,40 +86,13 @@ const App = () => {
             Task Statistics
           </h2>
           <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">2</div>
-              <div className="text-sm text-gray-600">Total Tasks</div>
-            </div>
-            <div className="p-4 bg-yellow-50 rounded-lg">
-              <div className="text-2xl font-bold text-yellow-600">2</div>
-              <div className="text-sm text-gray-600">Pending</div>
-            </div>
-            <div className="p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">1</div>
-              <div className="text-sm text-gray-600">Completed</div>
-            </div>
+            <StatCard tasksCount={1} label="Completed Tasks" />
+            <StatCard tasksCount={1} label="Pending" type="pending" />
+            <StatCard tasksCount={1} label="Completed" type="completed" />
           </div>
         </section>
-        {/* Footer */}
-        <footer className="bg-white border-t border-gray-200 mt-8">
-          <div className="max-w-4xl mx-auto px-4 py-2">
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <div className="text-gray-600">
-                <span>Created by</span>{" "}
-                <span className="font-semibold text-gray-900">
-                  <a
-                    href="https://github.com/asifjirayat"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Asif Jirayat
-                  </a>
-                </span>
-              </div>
-            </div>
-          </div>
-        </footer>
       </main>
+      <Footer />
     </>
   );
 };

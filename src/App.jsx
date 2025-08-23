@@ -1,112 +1,27 @@
-import { act, useEffect, useState } from "react";
 import Header from "./components/Header.jsx";
 import Section from "./components/Section.jsx";
 import Button from "./components/Button.jsx";
 import TaskItem from "./components/TaskItem.jsx";
 import StatCard from "./components/StatCard.jsx";
 import Footer from "./components/Footer.jsx";
+import { useTaskManager } from "./hooks/useTaskManager.js";
 
 const App = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [showAddForm, setShowAddForm] = useState(false);
-
-  // Initialize tasks from localStorage
-  const [tasks, setTasks] = useState(() => {
-    try {
-      const savedTasks = localStorage.getItem("tasks");
-      return savedTasks ? JSON.parse(savedTasks) : [];
-    } catch (error) {
-      console.error("Error loading tasks from localStorage:", error);
-      return [];
-    }
-  });
-
-  const [newTaskText, setNewTaskText] = useState("");
-
-  // Sync tasks from localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    } catch (error) {
-      console.error("Error saving tasks to localStorage:", error);
-    }
-  }, [tasks]);
-
-  // Handle search input
-  const handleSearchInput = (event) => {
-    const { value } = event.target;
-    setSearchTerm(value);
-  };
-
-  // Handle filter selection
-  const handleFilterChange = (filter) => {
-    setActiveFilter(filter);
-  };
-
-  // Handle add task
-  const handleToggleAddTask = () => {
-    setShowAddForm(!showAddForm);
-  };
-
-  // Handle task input
-  const handleTaskInput = (event) => {
-    const { value } = event.target;
-    setNewTaskText(value);
-  };
-
-  // Handle new tasks added
-  const handleAddTask = () => {
-    if (newTaskText.trim()) {
-      const capitalizedText =
-        newTaskText.trim().charAt(0).toUpperCase() +
-        newTaskText.trim().slice(1);
-      const newTask = {
-        id: Date.now(),
-        text: capitalizedText,
-        completed: false,
-      };
-
-      setTasks([...tasks, newTask]);
-      setNewTaskText("");
-      setShowAddForm(false);
-    }
-  };
-
-  // Handle task completion toggle
-  const handleToggleTask = (taskId) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };
-
-  // Handle task deletion
-  const handleDeleteTask = (taskId) =>
-    setTasks(tasks.filter((task) => task.id !== taskId));
-
-  // Function to get filtered tasks
-  const getFilteredTasks = () => {
-    let filteredTasks = tasks;
-
-    // Apply status filter
-    if (activeFilter === "pending")
-      filteredTasks = filteredTasks.filter((task) => !task.completed);
-    else if (activeFilter === "completed")
-      filteredTasks = filteredTasks.filter((task) => task.completed);
-
-    if (searchTerm.trim()) {
-      filteredTasks = filteredTasks.filter((task) =>
-        task.text.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    return filteredTasks;
-  };
-
-  const filteredTasks = getFilteredTasks();
-
+  const {
+    searchTerm,
+    activeFilter,
+    showAddForm,
+    newTaskText,
+    tasks,
+    filteredTasks,
+    handleSearchInput,
+    handleFilterChange,
+    handleToggleAddTask,
+    handleTaskInput,
+    handleAddTask,
+    handleToggleTask,
+    handleDeleteTask,
+  } = useTaskManager();
   return (
     <>
       <Header />

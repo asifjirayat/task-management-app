@@ -10,6 +10,8 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [newTaskText, setNewTaskText] = useState("");
 
   // Handle search input
   const handleSearchInput = (event) => {
@@ -24,8 +26,29 @@ const App = () => {
 
   // Handle add task
   const handleToggleAddTask = () => {
-    console.log("Handle toggle add task called....");
     setShowAddForm(!showAddForm);
+  };
+
+  // Handle task input
+  const handleTaskInput = (event) => {
+    const { value } = event.target;
+    setNewTaskText(value);
+  };
+
+  // Handle new tasks added
+  const handleAddTask = () => {
+    if (newTaskText.trim()) {
+      const newTask = {
+        id: Date.now(),
+        text: newTaskText.trim(),
+        completed: false,
+      };
+
+      setTasks([...tasks, newTask]);
+      setNewTaskText("");
+      setShowAddForm(false);
+      console.log("Task added:", newTask);
+    }
   };
 
   return (
@@ -58,8 +81,10 @@ const App = () => {
                 type="text"
                 placeholder="Enter task description..."
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                value={newTaskText}
+                onChange={handleTaskInput}
               />
-              <Button>Save Task</Button>
+              <Button onClick={handleAddTask}>Save Task</Button>
               <Button type="buttonUnselected" onClick={handleToggleAddTask}>
                 Cancel
               </Button>
@@ -104,9 +129,10 @@ const App = () => {
         {/* Task List*/}
         <Section title="Task List">
           <div className="space-y-3">
-            <TaskItem task="Learn React useState hook" />
-            <TaskItem task="Setup project with Vite" />
-            <TaskItem task="Learn React useState hook" />
+            {console.log(tasks)}
+            {tasks.map((task) => (
+              <TaskItem key={task.id} task={task.text} />
+            ))}
           </div>
         </Section>
 
